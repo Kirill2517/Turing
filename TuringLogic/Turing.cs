@@ -252,6 +252,25 @@ namespace TuringLogic
             GetNewTablePlus(CountState, Alphabet);
         }
 
+        public void DeleteValuesFromAlph(HashSet<char> removeAlph)
+        {
+            //проверка на существование всех символов в алфавите => новый алфавит для удаления создать
+            removeAlph = removeAlph.Where(i => Alphabet.Contains(i)).ToHashSet();
+
+            //удалить символы из текущей строки
+
+            WordDefault = new string(WordDefault.Where(i => !removeAlph.Contains(i)).ToArray());
+
+            //удалить удалить символы из алфавита
+
+            foreach (var item in removeAlph)
+            {
+                Alphabet.Remove(item);
+            }
+            Tape.SetWordDefault(WordDefault);
+            GetNewTableMinus(CountState, Alphabet);
+        }
+
         private void GetNewTablePlus(int countState, HashSet<char> alphabet)
         {
             var table = TableCommand;
