@@ -171,7 +171,7 @@ namespace TuringLogic
             isWork = true;
         }
 
-        public async Task<Result> WorkMachine(Action print)
+        public async Task<Error> WorkMachine(Action print)
         {
             var alph = Alphabet.ToList();
             isWork = true;
@@ -185,7 +185,7 @@ namespace TuringLogic
                 if (command is null)
                 {
                     isWork = false;
-                    return Result.ErrorNullCommand;
+                    return new Error(value, CurrentState, Result.ErrorNullCommand);
                 }
 
                 Tape.TapeDic[CurrentTapePoint].SetValue(command.ChangeSim);
@@ -202,13 +202,13 @@ namespace TuringLogic
                 {
                     print.Invoke();
                     isWork = false;
-                    return Result.ErrorTapeIsEnd;
+                    return new Error(Result.ErrorTapeIsEnd);
                 }
             }
 
             print?.Invoke();
             isWork = false;
-            return Result.Ok;
+            return new Error(Result.Ok);
         }
 
         public bool AddCommand(int column, int row, Command command)

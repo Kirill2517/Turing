@@ -258,16 +258,23 @@ namespace turing
             Runblock();
             if (!UIController.Turing.isWork) UIController.Turing.ContinueWork();
             var result = await UIController.Turing.WorkMachine(ChangeTuringAsync);
-            if (result == Result.ErrorNullCommand)
-                MessageBox.Show("Нет данной команды!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            else if (result == Result.ErrorTapeIsEnd)
-                MessageBox.Show("Закончилась лента!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            if (result.Result == Result.ErrorNullCommand)
+                PrintErrorToLog($"Команды со значением \"{result.Value}\" и состоянием {result.State} не существует!", Color.Red);
+            else if (result.Result == Result.ErrorTapeIsEnd)
+                PrintErrorToLog("Закончилась лента!", Color.Red);
             RunUnblock();
             RestartUnBlock();
             Stopblock();
         }
 
-
+        private void PrintErrorToLog(string error, Color color)
+        {
+            var startIndex = Log.Text.Length;
+            Log.AppendText(error);
+            Log.Select(startIndex, error.Length);
+            Log.SelectionColor = color;
+            Log.AppendText("\n");
+        }
 
         private void начатьСНачалаToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -486,7 +493,6 @@ namespace turing
             await Task.Run(() =>
             {
                 ChangeTuringAsync();
-
             });
 
             CreateTableTuring();
@@ -555,7 +561,7 @@ namespace turing
             wordSB.Insert(indexCurrentValue + 2, ")");
             wordSB.AppendLine();
 
-            Log.Text += state + wordSB.ToString().Trim(' ') + '\n';
+            Log.AppendText(state + wordSB.ToString().Trim(' ') + '\n');
             CurrentStateL.Text = $"Q{currentState}";
 
             //ставим головку
