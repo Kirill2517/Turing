@@ -593,9 +593,14 @@
             this.оПрограммеToolStripMenuItem.Size = new System.Drawing.Size(110, 20);
             this.оПрограммеToolStripMenuItem.Text = "О программе";
             // 
+            // saveFileDialog1
+            // 
+            this.saveFileDialog1.Filter = "Text Files | *.tur";
+            // 
             // openFileDialog1
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
+            this.openFileDialog1.Filter = "Text Files | *.tur";
             // 
             // Form1
             // 
@@ -609,6 +614,7 @@
             this.Name = "Form1";
             this.Text = "Машина Тьюринга";
             this.Load += new System.EventHandler(this.Form1_Load);
+            this.Paint += new System.Windows.Forms.PaintEventHandler(this.Form1_Paint);
             splitContainer1.Panel1.ResumeLayout(false);
             splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(splitContainer1)).EndInit();

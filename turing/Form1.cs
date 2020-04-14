@@ -12,6 +12,7 @@ using TuringLogic;
 using System.Xml;
 using System.Xml.Serialization;
 using System.Text.RegularExpressions;
+using System.Runtime.InteropServices;
 
 namespace turing
 {
@@ -19,6 +20,9 @@ namespace turing
     {
         UIController UIController;
         List<Button> ButtonsTapePoint;
+
+        [DllImport("user32.dll")]
+        static extern bool HideCaret(IntPtr hWnd);
 
         public Form1()
         {
@@ -34,7 +38,6 @@ namespace turing
             ButtonOffBorder(ref restartButton);
             ButtonOffBorder(ref addNewState);
             ButtonOffBorder(ref AddNewSimToAlph);
-
         }
 
         #region MethodsStyle
@@ -128,8 +131,14 @@ namespace turing
 
         #region Events
 
+        private void Form1_Paint(object sender, PaintEventArgs e)
+        {
+            HideCaret(Log.Handle);
+        }
+
         private void Log_MouseDown(object sender, MouseEventArgs e)
         {
+            HideCaret(Log.Handle);
             if (e.Button == MouseButtons.Right)
             {
                 var clear = new ToolStripButton("Очистить");
@@ -146,21 +155,29 @@ namespace turing
 
         private void CopyLog_Click(object sender, EventArgs e)
         {
-            if (sender is ToolStripButton toolStripButton)
+            if (sender is ToolStripButton)
             {
-                Clipboard.SetText(Log.SelectedText, TextDataFormat.UnicodeText);
+                try
+                {
+                    Clipboard.SetText(Log.SelectedText, TextDataFormat.UnicodeText);
+                }
+                catch { };
             }
+            HideCaret(Log.Handle);
+
         }
 
         private void ClearLog_Click(object sender, EventArgs e)
         {
             Log.Text = string.Empty;
+            HideCaret(Log.Handle);
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
             CurrentStateL.Visible = false;
             Stopblock();
+
         }
 
         /// <summary>
@@ -310,7 +327,7 @@ namespace turing
                 return;
             if (saveFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                var fileStream = new FileStream(saveFileDialog1.FileName, FileMode.Truncate);
+                var fileStream = new FileStream(saveFileDialog1.FileName, FileMode.OpenOrCreate);
                 using (StreamWriter streamWriter = new StreamWriter(fileStream, Encoding.Default))
                 {
                     StringBuilder stringBuilder = new StringBuilder();
@@ -347,7 +364,6 @@ namespace turing
                     stringBuilder.AppendLine("<Description>");
                     stringBuilder.AppendLine(Description.Text);
                     stringBuilder.AppendLine("<Description>");
-
 
                     streamWriter.WriteLine(stringBuilder);
                 }
@@ -538,9 +554,10 @@ namespace turing
             wordSB.Insert(indexCurrentValue, "(");
             wordSB.Insert(indexCurrentValue + 2, ")");
             wordSB.AppendLine();
-            Log.Text += state + wordSB.ToString().Trim(' ') + '\n';
 
+            Log.Text += state + wordSB.ToString().Trim(' ') + '\n';
             CurrentStateL.Text = $"Q{currentState}";
+
             //ставим головку
             await Task.Run(() =>
              {
@@ -583,6 +600,5 @@ namespace turing
             return str;
         }
         #endregion
-
     }
 }
