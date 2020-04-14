@@ -536,7 +536,9 @@ namespace turing
             {
                 dataGridView1.Rows[i].Cells[0].Value = AlphNames[i + 1];
                 if (AlphNames[i + 1] is ' ')
+                {
                     dataGridView1.Rows[i].Cells[0].Value = "__";
+                }
             }
             for (int i = 0; i < dataGridView1.Columns.Count; i++)
             {
@@ -625,10 +627,10 @@ namespace turing
         {
             //если выделена ячейка
             var count = dataGridView1.SelectedRows.Count;
-            //Log.AppendText(count.ToString());
             var contextMenuStrip = new ContextMenuStrip();
-            if (count == 0)
-                if (e.Button == MouseButtons.Right)
+            if (e.Button == MouseButtons.Right)
+            {
+                if (count == 0)
                 {
                     ToolStripMenuItem toolBarButton = new ToolStripMenuItem("Выделить всю строку");
                     toolBarButton.Click += ToolBarButton_Click;
@@ -637,19 +639,21 @@ namespace turing
 
                     contextMenuStrip.Show(MousePosition, ToolStripDropDownDirection.Right);
                 }
-                else { }
-            //если выделены строки
-            else if (count > 0)
-            {
-                var d = count == 1 ? "у" : "и";
-                ToolStripMenuItem deleteRowsButton = new ToolStripMenuItem($"Удалить строк{d}");
-                deleteRowsButton.Click += DeleteRowsButton_Click;
+                //если выделены строки
+                else if (count > 0)
+                {
+                    var d = count == 1 ? "у" : "и";
+                    ToolStripMenuItem deleteRowsButton = new ToolStripMenuItem($"Удалить строк{d}");
+                    deleteRowsButton.Click += DeleteRowsButton_Click;
 
-                contextMenuStrip.Items.Add(deleteRowsButton);
+                    contextMenuStrip.Items.Add(deleteRowsButton);
 
-                contextMenuStrip.Show(MousePosition, ToolStripDropDownDirection.Right);
+                    contextMenuStrip.Show(MousePosition, ToolStripDropDownDirection.Right);
+                }
             }
         }
+
+
 
         private void DeleteRowsButton_Click(object sender, EventArgs e)
         {
@@ -657,6 +661,7 @@ namespace turing
 
             foreach (DataGridViewRow row in dataGridView1.SelectedRows)
             {
+                if (row.Index == dataGridView1.RowCount - 1) continue;
                 char item = Convert.ToChar(row.Cells[0].Value);
                 hashset.Add(item);
             }

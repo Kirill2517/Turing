@@ -256,7 +256,7 @@ namespace TuringLogic
         {
             //проверка на существование всех символов в алфавите => новый алфавит для удаления создать
             removeAlph = removeAlph.Where(i => Alphabet.Contains(i)).ToHashSet();
-
+            removeAlph.Remove(' ');
             //удалить символы из текущей строки
 
             WordDefault = new string(WordDefault.Where(i => !removeAlph.Contains(i)).ToArray());
