@@ -426,6 +426,7 @@
             this.Log.TabIndex = 4;
             this.Log.TabStop = false;
             this.Log.Text = "";
+            this.Log.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Log_MouseDown);
             // 
             // menuStrip1
             // 

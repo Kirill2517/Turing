@@ -127,6 +127,36 @@ namespace turing
         #endregion
 
         #region Events
+
+        private void Log_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                var clear = new ToolStripButton("Очистить");
+                clear.Click += ClearLog_Click;
+                var copy = new ToolStripButton("Скопировать");
+                copy.Click += CopyLog_Click;
+
+                var contextMenuStrip = new ContextMenuStrip();
+                contextMenuStrip.Items.AddRange(new ToolStripItem[] { clear, copy });
+
+                contextMenuStrip.Show(MousePosition, ToolStripDropDownDirection.Right);
+            }
+        }
+
+        private void CopyLog_Click(object sender, EventArgs e)
+        {
+            if (sender is ToolStripButton toolStripButton)
+            {
+                Clipboard.SetText(Log.SelectedText, TextDataFormat.UnicodeText);
+            }
+        }
+
+        private void ClearLog_Click(object sender, EventArgs e)
+        {
+            Log.Text = string.Empty;
+        }
+
         private void Form1_Load(object sender, EventArgs e)
         {
             CurrentStateL.Visible = false;
@@ -138,11 +168,14 @@ namespace turing
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Button_Click(object sender, EventArgs e)
+        private async void Button_Click(object sender, EventArgs e)
         {
-            var button = sender as Button;
-            UIController.UpdateCurrentTapePoint((int)button.Tag);
-            ChangeTuring();
+            await Task.Run(() =>
+            {
+                var button = sender as Button;
+                UIController.UpdateCurrentTapePoint((int)button.Tag);
+                ChangeTuringAsync();
+            });
         }
 
         private void настройкиToolStripMenuItem_Click(object sender, EventArgs e)
@@ -172,7 +205,7 @@ namespace turing
             if (!(UIController is null) && !(UIController.Turing is null)) UIController.Turing.ContinueWork();
         }
 
-        
+
 
         string PreviousCommand = "";
         private void dataGridView1_CellEndEdit(object sender, DataGridViewCellEventArgs e)
@@ -207,7 +240,7 @@ namespace turing
             StopUnblock();
             Runblock();
             if (!UIController.Turing.isWork) UIController.Turing.ContinueWork();
-            var result = await UIController.Turing.WorkMachine(ChangeTuring);
+            var result = await UIController.Turing.WorkMachine(ChangeTuringAsync);
             if (result == Result.ErrorNullCommand)
                 MessageBox.Show("Нет данной команды!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             else if (result == Result.ErrorTapeIsEnd)
@@ -223,7 +256,7 @@ namespace turing
         {
             RunUnblock();
             UIController.Restart();
-            ChangeTuring();
+            ChangeTuringAsync();
             Log.Text = "";
         }
 
@@ -268,7 +301,7 @@ namespace turing
         private void ChangeDefaultWord_Click(object sender, EventArgs e)
         {
             UIController.SetWordDefault(DefaultWordtextBox.Text);
-            ChangeTuring();
+            ChangeTuringAsync();
         }
 
         private void сохранитьКакToolStripMenuItem_Click(object sender, EventArgs e)
@@ -419,7 +452,7 @@ namespace turing
             return lastX;
         }
 
-        private void ShowTuringInterface()
+        private async void ShowTuringInterface()
         {
             ButtonsTapePoint = new List<Button>();
             Description.Text = "";
@@ -434,7 +467,11 @@ namespace turing
             RestartUnBlock();
             GenerateTape(UIController.Settings.minValueTape, UIController.Settings.maxValueTape);
             CurrentStateL.Visible = true;
-            ChangeTuring();
+            await Task.Run(() =>
+            {
+                ChangeTuringAsync();
+
+            });
 
             CreateTableTuring();
         }
@@ -487,7 +524,7 @@ namespace turing
             dataGridView1.Columns[0].ReadOnly = true;
         }
 
-        private void ChangeTuring()
+        private async void ChangeTuringAsync()
         {
             //Description.Text = UIController.Turing.Milliseconds.ToString();
             //выставляем состояние
@@ -505,26 +542,27 @@ namespace turing
 
             CurrentStateL.Text = $"Q{currentState}";
             //ставим головку
-            var button = ButtonsTapePoint.Single(i => (int)i.Tag == UIController.Turing.CurrentTapePoint);
-            button.BackColor = UIController.FormSettings.TapeColor;
+            await Task.Run(() =>
+             {
+                 var button = ButtonsTapePoint.Single(i => (int)i.Tag == UIController.Turing.CurrentTapePoint);
+                 button.BackColor = UIController.FormSettings.TapeColor;
 
-            foreach (var item in ButtonsTapePoint)
-            {
-                if ((int)item.Tag != UIController.Turing.CurrentTapePoint)
-                {
-                    item.BackColor = UIController.FormSettings.EmptyTapeColor;
-                }
-            }
+                 foreach (var item in ButtonsTapePoint)
+                 {
+                     if ((int)item.Tag != UIController.Turing.CurrentTapePoint)
+                     {
+                         item.BackColor = UIController.FormSettings.EmptyTapeColor;
+                     }
+                 }
 
-            //значения ленты
-            for (int i = 0; i < UIController.Turing.Tape.TapeDic.Count; i++)
-            {
-                ButtonsTapePoint[i].Text = UIController.Turing.Tape.TapeDic.ElementAt(i).Value.Value.ToString();
-            }
+                 //значения ленты
+                 for (int i = 0; i < UIController.Turing.Tape.TapeDic.Count; i++)
+                 {
+                     ButtonsTapePoint[i].Text = UIController.Turing.Tape.TapeDic.ElementAt(i).Value.Value.ToString();
+                 }
 
-            panel1.ScrollControlIntoView(button);
-
-
+                 panel1.ScrollControlIntoView(button);
+             });
         }
 
         private int GetIntFromFile(string regexString)
@@ -545,5 +583,6 @@ namespace turing
             return str;
         }
         #endregion
+
     }
 }

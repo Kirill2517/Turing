@@ -32,11 +32,11 @@ namespace turing
         public SettingsTuringDefault GetSettings()
         {
             HashSet<char> alph = alphabetTB.Text.ToHashSet();
-            if (startPositionNUD.Value > maxNUD.Value || startPositionNUD.Value < minNUD.Value)
-            { 
-                MessageBox.Show("Начальная позиция вне границ ленты!", "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return null;
-            }
+            //if (startPositionNUD.Value > maxNUD.Value || startPositionNUD.Value < minNUD.Value)
+            //{ 
+            //    MessageBox.Show("Начальная позиция вне границ ленты!", "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            //    return null;
+            //}
             SettingsTuringDefault settings = new SettingsTuringDefault(alph, (int)maxNUD.Value, (int)minNUD.Value, (int)countStateNUD.Value, (int)startPositionNUD.Value, defaultWordTB.Text);
             return settings;
         }
