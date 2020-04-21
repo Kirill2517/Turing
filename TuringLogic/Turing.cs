@@ -102,8 +102,7 @@ namespace TuringLogic
             CountState = countState + 1;
 
             var alf = alphabet.ToList();
-            alf.Remove(' ');
-            alf.Add(' ');
+            if (!alf.Contains(' ')) alf.Add(' ');
             alf.Remove('\0');
             alf.Insert(0, '\0');
 
@@ -270,14 +269,6 @@ namespace TuringLogic
             }
             Tape.SetWordDefault(WordDefault);
             GetNewTableMinus(CountState, Alphabet);
-        }
-
-        public void SetValueToTapePoint(int keyIndex, char value)
-        {
-            if (keyIndex < Tape.Min || keyIndex > Tape.Max || value is '\0') return;
-
-            if (Alphabet.Contains(value))
-                Tape.TapeDic[keyIndex].SetValue(value);
         }
 
         private void GetNewTablePlus(int countState, HashSet<char> alphabet)

@@ -168,7 +168,6 @@
             this.SaveB.TabIndex = 8;
             this.SaveB.Text = "Сохранить";
             this.SaveB.UseVisualStyleBackColor = true;
-            this.SaveB.Click += new System.EventHandler(this.SaveB_Click);
             // 
             // countStateNUD
             // 
