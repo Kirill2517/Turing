@@ -16,7 +16,7 @@ using System.Runtime.InteropServices;
 
 namespace turing
 {
-    public partial class Form1 : Form
+    public partial class MainForm : Form
     {
         UIController UIController;
         List<Button> ButtonsTapePoint;
@@ -24,7 +24,7 @@ namespace turing
         [DllImport("user32.dll")]
         static extern bool HideCaret(IntPtr hWnd);
 
-        public Form1()
+        public MainForm()
         {
             InitializeComponent();
             UIController = new UIController();
@@ -130,6 +130,67 @@ namespace turing
         #endregion
 
         #region Events
+
+        private void dataGridView1_SelectionChanged(object sender, EventArgs e)
+        {
+        }
+
+        private void dataGridView1_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            //если выделена ячейка
+            var count = dataGridView1.SelectedRows.Count;
+            var contextMenuStrip = new ContextMenuStrip();
+            if (e.Button == MouseButtons.Right)
+            {
+                if (count == 0)
+                {
+                    ToolStripMenuItem toolBarButton = new ToolStripMenuItem("Выделить всю строку");
+                    toolBarButton.Click += ToolBarButton_Click;
+
+                    contextMenuStrip.Items.Add(toolBarButton);
+
+                    contextMenuStrip.Show(MousePosition, ToolStripDropDownDirection.Right);
+                }
+                //если выделены строки
+                else if (count > 0)
+                {
+                    var d = count == 1 ? "у" : "и";
+                    ToolStripMenuItem deleteRowsButton = new ToolStripMenuItem($"Удалить строк{d}");
+                    deleteRowsButton.Click += DeleteRowsButton_Click;
+
+                    contextMenuStrip.Items.Add(deleteRowsButton);
+
+                    contextMenuStrip.Show(MousePosition, ToolStripDropDownDirection.Right);
+                }
+            }
+        }
+
+        private void DeleteRowsButton_Click(object sender, EventArgs e)
+        {
+            var hashset = new HashSet<char>();
+
+            foreach (DataGridViewRow row in dataGridView1.SelectedRows)
+            {
+                if (row.Index == dataGridView1.RowCount - 1) continue;
+                char item = Convert.ToChar(row.Cells[0].Value);
+                hashset.Add(item);
+            }
+
+            UIController.Turing.DeleteValuesFromAlph(hashset);
+            CreateTableTuring();
+            ChangeTuringAsync();
+            UIController.UpdateSettings();
+        }
+
+        private void ToolBarButton_Click(object sender, EventArgs e)
+        {
+            foreach (DataGridViewCell item in dataGridView1.SelectedCells)
+            {
+                var indexrow = item.RowIndex;
+                if (indexrow != dataGridView1.RowCount - 1)
+                    dataGridView1.Rows[indexrow].Selected = true;
+            }
+        }
 
         private void Form1_Paint(object sender, PaintEventArgs e)
         {
@@ -456,7 +517,7 @@ namespace turing
             panel1.Controls.Add(label);
 
             const int Height = 35;
-            Button button = new Button()
+            Button button = new DoubleButton()
             {
                 Text = value.ToString(),
                 BackColor = UIController.FormSettings.EmptyTapeColor,
@@ -466,14 +527,26 @@ namespace turing
                 TextAlign = ContentAlignment.MiddleCenter,
                 TabStop = false,
                 Tag = index,
-                Enabled = true
+                Enabled = true,
             };
             button.Click += Button_Click;
+            button.DoubleClick += Button_DoubleClick;
             ButtonOffBorder(ref button);
             UIController.Controls.Add(button);
             ButtonsTapePoint.Add(button);
             panel1.Controls.Add(button);
             return lastX;
+        }
+
+        private void Button_DoubleClick(object sender, EventArgs e)
+        {
+            Button button = (sender as Button);
+            int keyIndex = Convert.ToInt32(button.Tag);
+            var form = new ChangeSimbolForm(keyIndex);
+            form.ShowDialog();
+            form.Location = MousePosition;
+            ChangeTuringAsync();
+            UIController.UpdateSettings();
         }
 
         private async void ShowTuringInterface()
@@ -618,68 +691,5 @@ namespace turing
             return str;
         }
         #endregion
-
-        private void dataGridView1_SelectionChanged(object sender, EventArgs e)
-        {
-        }
-
-        private void dataGridView1_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
-        {
-            //если выделена ячейка
-            var count = dataGridView1.SelectedRows.Count;
-            var contextMenuStrip = new ContextMenuStrip();
-            if (e.Button == MouseButtons.Right)
-            {
-                if (count == 0)
-                {
-                    ToolStripMenuItem toolBarButton = new ToolStripMenuItem("Выделить всю строку");
-                    toolBarButton.Click += ToolBarButton_Click;
-
-                    contextMenuStrip.Items.Add(toolBarButton);
-
-                    contextMenuStrip.Show(MousePosition, ToolStripDropDownDirection.Right);
-                }
-                //если выделены строки
-                else if (count > 0)
-                {
-                    var d = count == 1 ? "у" : "и";
-                    ToolStripMenuItem deleteRowsButton = new ToolStripMenuItem($"Удалить строк{d}");
-                    deleteRowsButton.Click += DeleteRowsButton_Click;
-
-                    contextMenuStrip.Items.Add(deleteRowsButton);
-
-                    contextMenuStrip.Show(MousePosition, ToolStripDropDownDirection.Right);
-                }
-            }
-        }
-
-
-
-        private void DeleteRowsButton_Click(object sender, EventArgs e)
-        {
-            var hashset = new HashSet<char>();
-
-            foreach (DataGridViewRow row in dataGridView1.SelectedRows)
-            {
-                if (row.Index == dataGridView1.RowCount - 1) continue;
-                char item = Convert.ToChar(row.Cells[0].Value);
-                hashset.Add(item);
-            }
-
-            UIController.Turing.DeleteValuesFromAlph(hashset);
-            CreateTableTuring();
-            ChangeTuringAsync();
-            UIController.UpdateSettings();
-        }
-
-        private void ToolBarButton_Click(object sender, EventArgs e)
-        {
-            foreach (DataGridViewCell item in dataGridView1.SelectedCells)
-            {
-                var indexrow = item.RowIndex;
-                if (indexrow != dataGridView1.RowCount - 1)
-                    dataGridView1.Rows[indexrow].Selected = true;
-            }
-        }
     }
 }
