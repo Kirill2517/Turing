@@ -22,7 +22,7 @@ namespace TuringLogic
         /// </summary>
         public readonly List<char> AlphabetNames = new List<char>();
 
-        public TableCommand(int countState, HashSet<char> alphabet)
+        internal TableCommand(int countState, HashSet<char> alphabet)
         {
             Commands = new Command[alphabet.Count, countState];
 

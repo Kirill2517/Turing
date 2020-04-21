@@ -19,6 +19,5 @@ namespace TuringLogic
         WordMoreTape, 
         StartPositionMoreTapeMax,
         StartPositionSmallerTapeMin
-
     }
 }

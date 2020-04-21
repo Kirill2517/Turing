@@ -10,7 +10,7 @@ namespace TuringLogic
     {
         public bool HasValue { get; private set; }
         public char Value { get; private set; }
-        public TapePoint(char value = ' ')
+        internal TapePoint(char value = ' ')
         {
             SetValue(value);
         }

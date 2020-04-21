@@ -200,7 +200,7 @@ namespace TuringLogic
 
                 if (CurrentTapePoint == Tape.Max || CurrentTapePoint == Tape.Min)
                 {
-                    print.Invoke();
+                    print?.Invoke();
                     isWork = false;
                     return new Error(Result.ErrorTapeIsEnd);
                 }

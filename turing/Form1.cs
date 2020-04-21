@@ -402,6 +402,7 @@ namespace turing
                         }
                         ShowTuringInterface();
                         Description.Text = GetStringFromFile(reader.ReadToEnd());
+                        //GetTuringCommandToTable();
                     }
                 }
             }
@@ -493,7 +494,6 @@ namespace turing
             {
                 ChangeTuringAsync();
             });
-
             CreateTableTuring();
         }
 

@@ -10,7 +10,7 @@ namespace TuringLogic
         public Move Move { get; private set; }
         public int State { get; private set; }
 
-        public Command()
+        internal Command()
         {
 
         }
@@ -55,6 +55,5 @@ namespace TuringLogic
             return stringBuilder.ToString();
         }
 
-        static Random random = new Random();
     }
 }
