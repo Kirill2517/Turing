@@ -31,7 +31,7 @@ namespace turing
             AutoScroll = true;
             this.keyIndex = keyIndex;
         }
-
+        public int a;
         private void ChangeSimbolForm_Load(object sender, EventArgs e)
         {
             CreateSimbolsButton();
