@@ -52,5 +52,10 @@ namespace turing
             startPositionNUD.Maximum = maxNUD.Value;
             maxNUD.Minimum = minNUD.Value;
         }
+
+        private void SaveB_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

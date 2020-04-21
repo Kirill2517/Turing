@@ -1,6 +1,6 @@
 ﻿namespace turing
 {
-    partial class Form1
+    partial class MainForm
     {
         /// <summary>
         /// Обязательная переменная конструктора.
@@ -31,7 +31,7 @@
             System.Windows.Forms.SplitContainer splitContainer1;
             System.Windows.Forms.SplitContainer splitContainer3;
             System.Windows.Forms.SplitContainer splitContainer2;
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.CurrentStateL = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
